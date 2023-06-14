@@ -54,4 +54,48 @@ class ChessGame
 
         board
     end
+
+    def display_board
+        puts "\n   a b c d e f g h"
+        puts "  -----------------"
+        @board.each_with_index do |row, index|
+            print "#{8 - index}"
+            row.each { |piece| print_piece(piece) }
+            puts "| #{8 - index}"
+        end
+        puts "  -----------------"
+        puts "   a b c d e f g h\n"
+    end
+
+    def print_piece(piece)
+        print piece.nil? ? "  " : " #{piece}"
+    end
+
+    def get_move
+        print "#{current_player.capitalize}'s move (e.g., 'e2, e4, 'quit'): "
+        gets.chomp.downcase
+    end
+
+    def make_move(move)
+        from, to = move.split(" ")
+        x1, y1 = parse_position(from)
+        x2, y2 = parse_position(to)
+
+        @board[x2][y2] = @board[x1][y1]
+        @board[x1][y1] = nil
+    end
+
+    def valid_move?(move)
+        return false unless move.match?(/^[a-h][1-8] [a-h][1-8]$/)
+
+        from, to = move.split(" ")
+        x1, y1 = parse_position(from)
+        x2, y2 = parse_position(to)
+
+        return false if @board[x1][y1].nil?
+        return false unless valid_piece_move?(x1, y1, x2, y2)
+        return false if own_piece_on_target?(x1, y1, x2, y2)
+
+        true
+    end
 end
