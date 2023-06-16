@@ -98,4 +98,46 @@ class ChessGame
 
         true
     end
+
+    def valid_piece_move?(x1, y1, x2, y2)
+        piece = @board[x1][y1]
+
+        case piece.downcase
+        when "♙", "♟" then valid_pawn_move?(x1, y1, x2, y2)
+        when "♖", "♜" then valid_rook_move?(x1, y1, x2, y2)
+        when "♘", "♞" then valid_knight_move?(x1, y1, x2, y2)
+        when "♗", "♝" then valid_bishop_move?(x1, y1, x2, y2)
+        when "♕", "♛" then valid_queen_move?(x1, y1, x2, y2)
+        when "♔", "♚" then valid_king_move?(x1, y1, x2, y2)
+        else false
+        end
+    end
+
+    def valid_pawn_move?(x1, y1, x2, y2)
+        piece = @board[x1][y1]
+
+        return true if piece == "♙" && x2 == x1 - 1 && y2 == y1 && @board[x2][y2].nil?
+        return true if piece == "♟" && x2 == x1 + 1 && y2 == y1 && @board[x2][y2].nil?
+        return true if piece == "♙" && x2 == x1 - 1 && (y2 == y1 - 1 || y2 == y1 + 1) && enemy_piece_on_target?(x1, y1, x2, y2)
+        return true if piece == "♟" && x2 == x1 + 1 && (y2 == y1 - 1 || y2 == y1 + 1) && enemy_piece_on_target?(x1, y1, x2, y2) 
+            
+        false
+    end
+
+    def valid_rook_move?(x1, y1, x2, y2)
+        return true if x1 == x2 && y1 != y2 && clear_path?(x1, y1, x2, y2, :horizontal)
+        return true if y1 == y2 && x1 != x2 && clear_path?(x1, y1, x2, y2, :vertical)
+        
+        false
+    end
+
+    def valid_knight_move?(x1, y1, x2, y2)
+        dx = (x1 - x2).abs
+        dy = (y1 - y2).abs
+
+        return true if dx == 2 && dy == 1
+        return true if dx == 1 && dy == 2
+
+        false
+    end
 end
