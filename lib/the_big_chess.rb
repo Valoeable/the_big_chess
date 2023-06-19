@@ -140,4 +140,23 @@ class ChessGame
 
         false
     end
+
+    def valid_bishop_move?(x1, y1, x2, y2)
+        return true if (x1 - x2).abs == (y1 - y2).abs && clear_path?(x1, y1, x2, y2, :diagonal)
+
+        false
+    end
+
+    def valid_queen_move?(x1, y1, x2, y2)
+            return valid_rook_move?(x1, y1, x2, y2) || valid_bishop_move?(x1, y1, x2, y2)
+    end
+
+    def valid_king_move?(x1, y1, x2, y2)
+        dx = (x1 - x2).abs
+        dy = (y1 - y2).abs
+        
+        return true if dx <= 1 && dy <= 1
+
+        false
+    end
 end
