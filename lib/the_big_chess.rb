@@ -159,4 +159,37 @@ class ChessGame
 
         false
     end
+
+    def clear_path?(x1, y1, x2, y2, direction)
+        dx = (x2 - x1).sign
+        dy = (y2 - y1).sign
+
+        case direction 
+        when :horizontal
+            (y1 + dy).step(y2 - dy, dy).each { |y| return false unless @board[x1][y].nil? }
+        when :vertical
+            (x1 + dx).step(x2 - dx, dx).each { |x| return false unless @board[x][y1].nil? }
+        when :diagonal
+            (x2 + dx).step(x2 - dx, dx).zip((y1 + dy).step(y2 - dy, dy)).each { |x, y| return false unless @board[x][y].nil? }
+        end
+
+        true
+    end
+
+    def own_piece_on_target?(x1, y1, x2, y2)
+        piece = @board[x1][y1]
+        target_piece = @board[x2][y2]
+
+        return false if target_piece.nil?
+        return piece.downcase == target_piece.downcase
+    end
+
+    def enemy_piece_on_target?(x1, y1, x2, y2)
+        piece = @board[x1][y1]
+        target_piece = @board[x2][y2]
+
+        return false if target_piece.nil?
+        return piece.downcase != target_piece.downcase
+    end
+
 end
