@@ -192,4 +192,47 @@ class ChessGame
         return piece.downcase != target_piece.downcase
     end
 
+    def parse_position(position)
+        column, row = position.split('')
+        x = 8 - row.to_i
+        y = column.ord - 'a'.ord
+        [x, y]
+    end
+
+    def check_game_status
+        if checkmate?
+            @game_over = true
+            @winner = current_player
+        elsif stalemate?
+            @game_over = true
+            @draw = true
+        else
+            switch_players
+        end
+    end
+
+    def checkmate?
+
+        false
+    end
+
+    def stalemate?
+
+        false
+    end
+
+    def switch_players
+        @current_player = @current_player == :white ? :black : :white
+    end
+
+    def display_result
+        if draw
+            puts 'The game ended in a draw.'
+        else
+            puts "#{winner.capitalize} wins the game!"
+        end
+    end
 end
+
+game = ChessGame.new
+game.play
