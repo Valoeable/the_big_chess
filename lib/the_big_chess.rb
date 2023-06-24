@@ -212,13 +212,81 @@ class ChessGame
     end
 
     def checkmate?
+        king_position = find_king_position(current_player)
+
+        return false unless king_in_check?(king_position)
+
+        return false if any_valid_move?(current_player)
+
+        true
+    end
+
+    def stalemate?
+        king_position = find_king_position(current_player)
+
+        return false if king_in_check?(king_position)
+
+        return false if any_valid_move?(current_player)
+
+        true
+    end
+
+    def king_in_check?(king_position)
+        opponent = (current_player == :white) ? :black : :white
+        opponent_moves = []
+
+        each_piece(opponent) do |piece, x, y|
+            opponent_moves.concat(valid_moves_for_piece(x, y))
+        end
+
+        opponent_moves.include?(king_position)
+    end
+
+    def any_valid_move?(player)
+        each_piece(player) do |piece, x, y|
+            return true if valid_moves_for_piece(x, y).any?
+        end
 
         false
     end
 
-    def stalemate?
+    def each_piece(player)
+        @board.each_with_index do |row, x|
+            row.each_with_index do |piece, y|
+                next if piece.nil?
+                next unless piece.downcase = piece_for_player(player)
 
-        false
+                yield(piece, x, y)
+            end
+        end
+    end
+
+    def valid_moves_for_piece(x, y)
+        piece = @board[x][y]
+        valid_moves = []
+
+        8.times do |i|
+            8.times do |j|
+                move = "#{x}#{y} #{i}#{j}}"
+                valid_moves << move if valid_move?(move)
+            end
+        end
+
+        valid_moves
+    end
+
+    def find_king_position(player)
+        king = player == :white ? "♔" : "♚"
+
+        @board.each_with_index do |row, x|
+            row.each_with_index do |piece, y|
+                return [x, y] if piece == king
+            end
+        end
+    end
+
+    def piece_for_player(player)
+        player == :white ? "♔" : "♚"
     end
 
     def switch_players
