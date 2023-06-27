@@ -1,3 +1,5 @@
+require 'yaml'
+
 class ChessGame
     attr_accessor :board, :current_player, :game_over, :winner, :draw
 
@@ -14,6 +16,8 @@ class ChessGame
             display_board
             move = get_move
             break if move == "quit"
+            save_game if move == "save"
+            load_game if move == "load"
 
             if valid_move?(move)
                 make_move(move)
@@ -254,7 +258,7 @@ class ChessGame
         @board.each_with_index do |row, x|
             row.each_with_index do |piece, y|
                 next if piece.nil?
-                next unless piece.downcase = piece_for_player(player)
+                next unless piece.downcase == piece_for_player(player)
 
                 yield(piece, x, y)
             end
@@ -299,6 +303,42 @@ class ChessGame
         else
             puts "#{winner.capitalize} wins the game!"
         end
+    end
+
+    def save_game
+        game_data = {
+            board: @board,
+            current_player: @current_player
+            game_over: @game_over
+            winner: @winner
+            draw: @draw
+        }
+
+        File.open("chess_game_save.txt", "w") do |file|
+            file.write(game_data.to_yaml)
+        end
+
+        puts "Game saved."
+    rescue StandardError => e
+        puts "Failed to save the game #{e.message}"
+    end
+
+    def load_game
+        if File.exist?("chess_game_save.txt")
+            game_data = YAML.load_file("chess_game_save.txt")
+
+            @board = game.data[:board]
+            @current_player = game.data[:current_player]
+            @game_over = game.data[:game_over]
+            @winner = game.data[winner]
+            @draw = game.data[draw]
+
+            puts "Game loaded."
+        else
+            puts "No saved game found."
+        end
+    rescue StandardError => e
+        puts "Failed to save the game #{e.message}"
     end
 end
 
