@@ -308,9 +308,9 @@ class ChessGame
     def save_game
         game_data = {
             board: @board,
-            current_player: @current_player
-            game_over: @game_over
-            winner: @winner
+            current_player: @current_player,
+            game_over: @game_over,
+            winner: @winner,
             draw: @draw
         }
 
