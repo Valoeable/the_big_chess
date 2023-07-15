@@ -42,4 +42,36 @@ RSpec.describe ChessGame do
         end
     end
 
+    describe '#parse_position' do
+        it 'returns the correct coordinates for a given position' do
+            expect(game.parse_position('a1')).to eq([7][0])
+            expect(game.parse_position('e4')).to eq([4][4])
+            expect(game.parse_position('h8')).to eq([0][7])
+        end
+    end
+
+    describe '#save_game' do
+        it 'saves the game data to a file' do
+            game.save_file
+            expect(File.exist?('chess_game_save.txt')).to be_true
+        end
+    end
+
+    describe '#load_game' do
+        context 'when a saved game exists' do
+            it 'loads the game data from the file' do
+                game.load_file
+                expect(game.current_player).to eq(:black)
+                expect(game.game_over).to be_false
+                expect(game.winner).to be_nil
+            end
+        end
+
+        context 'when a saved game does not exist' do
+            it 'prints error message' do
+                allow(File).to receive(:exist?).and_return(false)
+                expect{ game.load_game }.to output("No saved game found \n").to_stdout
+            end
+        end
+    end
 end
